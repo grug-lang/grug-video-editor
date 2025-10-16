@@ -1,0 +1,32 @@
+on_run() {
+    meow_video: Video = video("meow.webm")
+    food_video: Video = video("food.webm")
+    huh_image: Image = image("huh.png")
+    drool_gif: Image = image("drool.gif")
+
+    remove_frames(meow_video, secs(30, 35))
+    remove_audio(meow_video, secs(30, 35))
+    remove_frames(meow_video, secs(10, 20))
+    remove_frames(food_video, secs(10, 30))
+
+    subclip: Video = subclip(meow_video, secs(0.5, 2.5))
+
+    grayscale(meow_video, secs(0, end()))
+    blur(meow_video, kernel(9, 9), secs(0, end()))
+    overlay_text(meow_video, "Cats", pos(30, 60), rgb(255, 200, 200), secs(0, end()))
+
+    looped_clip: Video = loop(subclip, 3)
+
+    append_video(meow_video, food_video)
+    append_video(meow_video, looped_clip)
+    append_image(meow_video, huh_image, 1.0)
+    append_image(meow_video, drool_gif, 1.0)
+
+    t: f32 = 0.0
+    while t < duration(meow_video) {
+        overlay_image(meow_video, drool_gif, secs(t, t + 1.0), pos(50, 50))
+        t = t + 2.0
+    }
+
+    export_video(meow_video, "output.mp4")
+}
