@@ -1,9 +1,11 @@
-import cv2
 import os
+
+import cv2
 
 # ==========================================================
 # 🔹 PIPELINE FILTERS
 # ==========================================================
+
 
 def append_video(frames, video_path):
     """Append frames from a video file to the current frame list."""
@@ -46,8 +48,10 @@ def cut(frames, start, count):
     end_idx = len(frames) - start
     start_idx = max(0, end_idx - count)
     new_frames = frames[:start_idx] + frames[end_idx:]
-    print(f"✂️ Cut {count} frames starting {start} frames back "
-          f"(removed frames {start_idx}:{end_idx})")
+    print(
+        f"✂️ Cut {count} frames starting {start} frames back "
+        f"(removed frames {start_idx}:{end_idx})"
+    )
     return new_frames
 
 
@@ -57,7 +61,9 @@ def to_grayscale(frames):
 
 def ensure_3channel(frames):
     """Convert grayscale frames back to 3-channel for display/saving."""
-    return [cv2.cvtColor(f, cv2.COLOR_GRAY2BGR) if len(f.shape) == 2 else f for f in frames]
+    return [
+        cv2.cvtColor(f, cv2.COLOR_GRAY2BGR) if len(f.shape) == 2 else f for f in frames
+    ]
 
 
 def blur_frames(frames, ksize=(7, 7)):
@@ -75,6 +81,7 @@ def overlay_text(frames, text, position=(50, 50), color=(0, 255, 0)):
 # 🔹 PIPELINE ENGINE
 # ==========================================================
 
+
 def apply_pipeline(frames, pipeline):
     """Apply a sequence of transformation functions to a list of frames."""
     for step in pipeline:
@@ -89,6 +96,7 @@ def apply_pipeline(frames, pipeline):
 # 🔹 PLAYER + SAVING SYSTEM
 # ==========================================================
 
+
 def save_video(frames, output_path="output.mp4", fps=30):
     """Save processed frames as an MP4 video."""
     if not frames:
@@ -97,9 +105,7 @@ def save_video(frames, output_path="output.mp4", fps=30):
 
     h, w = frames[0].shape[:2]
     os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
-    writer = cv2.VideoWriter(
-        output_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, (w, h)
-    )
+    writer = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*"mp4v"), fps, (w, h))
     for f in frames:
         writer.write(f)
     writer.release()
@@ -138,6 +144,7 @@ def play_video(frames, delay=30):
 # 🔹 MAIN
 # ==========================================================
 
+
 def main():
     # Define your single pipeline here
     pipeline = [
@@ -146,13 +153,20 @@ def main():
         (cut, 100, 100),
         (append_video, "food.webm"),
         (cut, 100, 200),
-        (to_grayscale,), # TODO: Add start and count arguments
-        (ensure_3channel,), # TODO: Add start and count arguments
-        (append_image, "huh.png"), # TODO: Add count argument
+        (to_grayscale,),  # TODO: Add start and count arguments
+        (ensure_3channel,),  # TODO: Add start and count arguments
+        (append_image, "huh.png"),  # TODO: Add count argument
         (append_image, "drool.gif"),
-        (blur_frames, (9, 9)), # TODO: Add start and count arguments
-        (overlay_text, "Cats", (30, 60), (255, 200, 200)), # TODO: Add start and count arguments
+        (blur_frames, (9, 9)),  # TODO: Add start and count arguments
+        (
+            overlay_text,
+            "Cats",
+            (30, 60),
+            (255, 200, 200),
+        ),  # TODO: Add start and count arguments
     ]
+
+    # TODO: Make sure the popped up video player also plays synchronized audio.
 
     print("Controls:")
     print("  SPACE - Play/Pause")
